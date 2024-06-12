@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Dog Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            scale: .95;
+
+        }
+
+        header,
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        header {
+            margin-top: 0;
+        }
+
+        footer {
+            margin-bottom: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            margin: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0 0 20px;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-item img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Hot Dog Shop</h1>
+        <a class="button" href="info.html">Informações</a>
+    </header>
+    <main>
+        <div class="menu-item">
+            <img src="https://via.placeholder.com/150" alt="Hot Dog">
+            <div>
+                <h2>Hot Dog Clássico</h2>
+                <p>Pão, salsicha, molhos diversos, cebola, alface e tomate.</p>
+                <p><strong>R$ 8,00</strong></p>
+            </div>
+        </div>
+        <div class="menu-item">
+            <img src="https://via.placeholder.com/150" alt="Hot Dog">
+            <div>
+                <h2>Hot Dog Vegetariano</h2>
+                <p>Pão integral, salsicha de soja, molhos diversos, cebola, alface e tomate.</p>
+                <p><strong>R$ 7,50</strong></p>
+            </div>
+        </div>
+        <div class="menu-item">
+            <img src="https://via.placeholder.com/150" alt="Hot Dog">
+            <div>
+                <h2>Hot Dog Especial</h2>
+                <p>Pão de brioche, salsicha premium, molhos artesanais, cebola caramelizada, bacon crocante, alface e
+                    tomate.</p>
+                <p><strong>R$ 12,00</strong></p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <a class="button" href="/">Homepage</a>
+    </footer>
+</body>
+
+</html>

@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const { Pool } = require('pg');
+const path = require('path'); // Importe o módulo 'path'
 
 app.use(express.json()); // for parsing application/json
 
@@ -25,11 +26,28 @@ app.post('/insert', async (req, res) => {
   }
 });
 
-app.get('/select', async (req, res) => {
-  res.json({ message: 'This is the Select Page.' });
-});
+// Homepage usando Funcao sem nome
+app.get('/',
+  async (req, res) => {
+    // res.json({ message: 'Hello world! select 2' });
+    const filePath = path.join(__dirname, 'Pages', 'Homepage', 'Homepage.html');
+    res.sendFile(filePath);
+  });
 
+// info page chamando funcao
+function HandleFunction(req, res) {
+  // res.json({ message: "Hello world! " + req.params.id })
+  const filePath = path.join(__dirname, 'Pages', 'InfoPage', 'InfoPage.html');
+  res.sendFile(filePath);
+}
 
+app.get('/info', HandleFunction)
+
+// 3
+const ArrowFunction = (req, res) => {
+  res.json({ message: "Hello world! " })
+}
+app.get('/', ArrowFunction)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
