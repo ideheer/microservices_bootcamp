@@ -30,20 +30,21 @@ app.post('/insert', async (req, res) => {
 app.get('/',
   async (req, res) => {
     // res.json({ message: 'Hello world! select 2' });
+    // console.log(req)
     const filePath = path.join(__dirname, 'Pages', 'Homepage', 'Homepage.html');
     res.sendFile(filePath);
   });
 
+
 // info page chamando funcao
 function HandleFunction(req, res) {
-  // res.json({ message: "Hello world! " + req.params.id })
   const filePath = path.join(__dirname, 'Pages', 'InfoPage', 'InfoPage.html');
   res.sendFile(filePath);
 }
 
 app.get('/info', HandleFunction)
 
-// 3
+// Não criei nada ainda
 const ArrowFunction = (req, res) => {
   res.json({ message: "Hello world! " })
 }
