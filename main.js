@@ -24,8 +24,9 @@ app.post('/insert', async (req, res) => {
     res.send("Error " + err);
   }
 });
+
 app.get('/select', async (req, res) => {
-    res.json({ message: 'This is the Select Page.' });
+  res.json({ message: 'This is the Select Page.' });
 });
 
 
