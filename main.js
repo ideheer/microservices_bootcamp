@@ -5,54 +5,33 @@ const path = require('path'); // Importe o módulo 'path'
 
 app.use(express.json()); // for parsing application/json
 
-// Create a new pool of connections for the database
-const pool = new Pool({
-  user: 'dbuser',
-  host: 'database.server.com',
-  database: 'mydb',
-  password: 'secretpassword',
-  port: 5432,
+const authors = [];
+let authorCounter = 0;
+
+app.post('/authors', (req, res) => {
+  const newAuthor = {
+    "id": authorCounter,
+    "name": req.body.name,
+    "bio": req.body.bio
+  };
+  authors.push(newAuthor);
+  console.log(req.body);
+  authorCounter++;
+  res.send(req.body);
 });
 
-app.post('/insert', async (req, res) => {
-  const { name, email } = req.body;
+app.get('/authors', (req, res) => {
+  res.json(authors);
+});
 
-  try {
-    const result = await pool.query('INSERT INTO users (name, email) VALUES ($1, $2)', [name, email]);
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.send("Error " + err);
+app.get('/authors/:id', (req, res) => {
+  let authorId = req.params.id;
+  console.log('get /authors/:id', authors[authorId]);
+  if(authors[authorId]){
+    res.json(authors[authorId]);
   }
+  else(res.status(404).send('Not found'));
 });
-function my_function(req, res) {
-  res.json({ message: 'This is the Select Page.' });
-}
-app.get('/select', my_function);
-
-
-// Homepage usando Funcao sem nome
-app.get('/',
-  async (req, res) => {
-    // res.json({ message: 'Hello world! select 2' });
-    const filePath = path.join(__dirname, 'Pages', 'Homepage', 'Homepage.html');
-    res.sendFile(filePath);
-  });
-
-// info page chamando funcao
-function HandleFunction(req, res) {
-  // res.json({ message: "Hello world! " + req.params.id })
-  const filePath = path.join(__dirname, 'Pages', 'InfoPage', 'InfoPage.html');
-  res.sendFile(filePath);
-}
-
-app.get('/info', HandleFunction)
-
-// 3
-const ArrowFunction = (req, res) => {
-  res.json({ message: "Hello world! " })
-}
-app.get('/', ArrowFunction)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
