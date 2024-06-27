@@ -33,6 +33,18 @@ app.get('/authors/:id', (req, res) => {
   else(res.status(404).send('Not found'));
 });
 
+app.put('/authors/:id', (req, res) => {
+  let authorId = req.params.id;
+  if(authors[authorId]){
+    authIndex = authors.findIndex(obj => obj.id == authorId);
+    console.log("Author updated from: ", authors[authIndex]);
+    authors[authIndex].name = req.body.name;
+    authors[authIndex].bio = req.body.bio;
+    console.log("to: ", authors[authIndex])
+  }
+  else(res.status(404).send('Not found'));
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
