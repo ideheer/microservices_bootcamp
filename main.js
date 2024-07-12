@@ -1,7 +1,11 @@
-const express = require('express');
+import Author from './model/author.js';
+import express from 'express';
+import * as pg from 'pg'
+import path from 'path';
+
+const { Pool } = pg.default;
+
 const app = express();
-const { Pool } = require('pg');
-const path = require('path'); // Importe o módulo 'path'
 
 const pool = new Pool({
   user: 'admin',
@@ -20,15 +24,16 @@ let bookCounter = 0;
 
 //Create author
 app.post('/authors', async (req, res) => {
-  // below code works. just a different method of implementation
-  // const result = await pool.query(`INSERT INTO public.authors(name, bio) VALUES ('${req.body.name}', '${req.body.bio}')`);
-  const result = await pool.query('INSERT INTO public.authors(name, bio) VALUES ($1, $2)', [req.body.name, req.body.bio]);
-  
-  // if(result.rowCount){
-  //   res.send('Success');
-  // };
-  // Same as above
-  result.rowCount ? res.send('Success') : null;
+  try{
+    const authorPayload = {name:req.body.name, bio:req.body.bio, id:-1};
+    const author = new Author(authorPayload);
+    author.validate();
+    const result = await pool.query('INSERT INTO public.authors(name, bio) VALUES ($1, $2)', [author.name, author.bio]);
+    result.rowCount ? res.send('Success') : null;
+  }
+  catch(error){
+    res.status(400).send(error.message);
+  }
 });
 
 //Get all authors
@@ -39,7 +44,18 @@ app.get('/authors', async (req, res) => {
     res.status(404).send('Not found');
   }
   else{
-    res.json(result.rows)
+    const authors = [];
+    try{
+      for(const obj of result.rows){
+        const newAuthor = new Author(obj);
+        newAuthor.validate();
+        authors.push(newAuthor);
+      }
+      res.json(authors);
+    }
+    catch(error){
+      res.status(500).send(error.message);
+    }
   }
 });
 
@@ -53,7 +69,12 @@ app.get('/authors/:id', async (req, res) => {
     res.status(404).send('Not found');
   }
   else{
-    res.json(result.rows[0])
+    const author = new Author(result.rows[0]);
+    const validation = author.validate();
+    if(!validation){
+      res.status(500).send('Invalid Author, validation failed');
+    }
+    res.json(author);
   }
 });
 
