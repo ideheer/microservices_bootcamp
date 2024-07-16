@@ -14,4 +14,4 @@ export default class Author{
             throw new Error("Invalid Author information");
         }
     }
-}
+};

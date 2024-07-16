@@ -1,4 +1,5 @@
 import Author from './model/author.js';
+import Book from './model/book.js';
 import express from 'express';
 import * as pg from 'pg'
 import path from 'path';
@@ -16,11 +17,6 @@ const pool = new Pool({
 });
 
 app.use(express.json()); // for parsing application/json
-
-const authors = [];
-const books = [];
-let authorCounter = 0;
-let bookCounter = 0;
 
 //Create author
 app.post('/authors', async (req, res) => {
@@ -102,31 +98,68 @@ app.delete('/authors/:id', async (req, res) => {
   }
 });
 
-//Create book
+//Create a book
 app.post('/books', async (req, res) => {
-  const result = await pool.query('INSERT INTO public.books(title, "publishedDate", "authorId", summary) VALUES ($1, $2, $3, $4)', [req.body.title, req.body.publishedDate, req.body.authorId, req.body.summary]);
-  result.rowCount ? res.send('Success') : null;
+  try{
+    const bookPayload = {
+      title:req.body.title, 
+      publishedDate:req.body.publishedDate, 
+      authorId:req.body.authorId,
+      summary: req.body.summary,
+      id:-1
+    };
+    const book = new Book(bookPayload);
+    book.validate();
+    const result = await pool.query('INSERT INTO public.books(title, "publishedDate", "authorId", summary) VALUES ($1, $2, $3, $4)', [book.title, book.publishedDate, book.authorId, book.summary]);
+    result.rowCount ? res.send('Success') : null;
+  }
+  catch(error){
+    res.status(400).send(error.message);
+  }
 });
+
 
 //Get all books
 app.get('/books', async (req, res) => {
+  // res.json(authors);
   const result = await pool.query('SELECT * FROM books order by id');
-  if(result.rows.length == 0){
-    res.status(404).send('Not Found');
-  }
-  else{
-    res.json(result.rows)
-  }
-});
-
-//Get book by ID
-app.get('/books/:id', async (req, res) => {
-  const result = await pool.query('SELECT * FROM books WHERE id = $1', [req.params.id]);
   if(result.rows.length == 0){
     res.status(404).send('Not found');
   }
   else{
-    res.json(result.rows[0])
+    const books = [];
+    try{
+      for(const obj of result.rows){
+        const newBook = new Book(obj);
+        newBook.validate();
+        books.push(newBook);
+      }
+      res.json(books);
+    }
+    catch(error){
+      res.status(500).send(error.message);
+    }
+  }
+});
+
+
+
+//Get book by ID
+app.get('/books/:id', async (req, res) => {
+  let bookId = req.params.id;
+  console.log('get /books/:id', books[bookId]);
+  const result = await pool.query('SELECT * FROM books WHERE id = $1', [bookId]);
+
+  if(result.rows.length == 0){
+    res.status(404).send('Not found');
+  }
+  else{
+    const book = new Book(result.rows[0]);
+    const validation = book.validate();
+    if(!validation){
+      res.status(500).send('Invalid Book, validation failed');
+    }
+    res.json(book);
   }
 });
 
@@ -148,7 +181,7 @@ app.delete('/books/:id', async (req, res) => {
   const result = await pool.query('DELETE FROM public.books WHERE id=$1', [bookId]);
   if(result.rowCount == 1){
     res.send('Success');
-  }
+  } 
   else{
     res.status(404).send('Not found');
   }
