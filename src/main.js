@@ -1,5 +1,7 @@
 import Author from './model/author.js';
 import Book from './model/book.js';
+import authorController from './controller/author.js';
+//import bookController from './controller/book.js';
 import express from 'express';
 import * as pg from 'pg'
 import path from 'path';
@@ -19,18 +21,7 @@ const pool = new Pool({
 app.use(express.json()); // for parsing application/json
 
 //Create author
-app.post('/authors', async (req, res) => {
-  try{
-    const authorPayload = {name:req.body.name, bio:req.body.bio, id:-1};
-    const author = new Author(authorPayload);
-    author.validate();
-    const result = await pool.query('INSERT INTO public.authors(name, bio) VALUES ($1, $2)', [author.name, author.bio]);
-    result.rowCount ? res.send('Success') : null;
-  }
-  catch(error){
-    res.status(400).send(error.message);
-  }
-});
+app.post('/authors', authorController(pool).create);
 
 //Get all authors
 app.get('/authors', async (req, res) => {

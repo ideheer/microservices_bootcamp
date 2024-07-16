@@ -1,10 +1,10 @@
 {
   "name": "microservices_bootcamp",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/main"
   },
   "author": "Ian de Heer",
   "license": "MIT",
