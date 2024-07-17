@@ -13,8 +13,8 @@ const createBook = async (req, res) => {
         res.status(400).send("Bad request. Missing required field(s).");
     };
     try{
-        const result = await bookService(dbConnection).create(bookPayload);
-        res.json({"Success":result});
+        const createdBook = await bookService(dbConnection).create(bookPayload);
+        res.send(createdBook);
     }
     catch(error){
         res.status(500).send(error.message);

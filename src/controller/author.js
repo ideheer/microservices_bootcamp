@@ -1,3 +1,4 @@
+import NotFoundError from "../errors/errors.js";
 import authorService from "../service/author.js";
 
 let dbConnection = null;
@@ -7,10 +8,11 @@ const createAuthor = async (req, res) => {
     const authorPayload = {name:req.body.name, bio:req.body.bio};
     if (!authorPayload.name || !authorPayload.bio){
         res.status(400).send("Bad request. Missing required field(s).");
+        return;
     }
     try{
-        const result = await authorService(dbConnection).create(authorPayload);
-        res.json({"Success":result});
+        const createdAuthor = await authorService(dbConnection).create(authorPayload);
+        res.send(createdAuthor);
     }
     catch(error){
         res.status(500).send(error.message);
@@ -33,15 +35,15 @@ const getAuthor = async (req, res) => {
     let authorId = req.params.id;
     try{
         const result = await authorService(dbConnection).get(authorId);
-        if(result == null){
-            res.status(404).send('Not found');
-        }
-        else{
         res.json(result);
-        }
     }
     catch(error){
-        res.status(500).send(error.message);
+        if(error instanceof NotFoundError){
+            res.status(404).send(error.message);
+        }
+        else{
+            res.status(500).send(error.message);
+        }
     }
 };
 
@@ -50,11 +52,11 @@ const updateAuthor = async (req, res) => {
     const authorPayload = {name:req.body.name, bio:req.body.bio, id:req.params.id};
     //console.log(authorPayload);
     if (!authorPayload.name || !authorPayload.bio){
-            res.status(400).send("Bad request. Missing required field(s).");
+        res.status(400).send("Bad request. Missing required field(s).");
     }
     try{
-        const result = await authorService(dbConnection).update(authorPayload);
-        res.json({"Success":result});
+        const updatedAuthor = await authorService(dbConnection).update(authorPayload);
+        res.send(updatedAuthor);
     }
     catch(error){
         res.status(500).send(error.message);
@@ -69,7 +71,12 @@ const deleteAuthor = async (req, res) => {
         res.json({"Success":result});
     }
     catch(error){
-        res.status(500).send(error.message);
+        if(error instanceof NotFoundError){
+            res.status(404).send(error.message);
+        }
+        else{
+            res.status(500).send(error.message);
+        }
     }
 };
 

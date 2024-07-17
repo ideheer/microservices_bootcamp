@@ -3,19 +3,31 @@ import Book from "../model/book.js"
 let dbConnection = null;
 
 const createBook = async ({title, publishedDate, authorId, summary}) => {
-    const result = await dbConnection.query('INSERT INTO public.books(title, "publishedDate", "authorId", summary) VALUES ($1, $2, $3, $4)', [title, publishedDate, authorId, summary]);
-    return result.rowCount ? true : false;
+    try{
+      const result = await dbConnection.query('INSERT INTO public.books(title, "publishedDate", "authorId", summary) VALUES ($1, $2, $3, $4) RETURNING *', [title, publishedDate, authorId, summary]);
+      const createdBook = new Book(result.rows[0]);
+      createdBook.validate();
+      return createdBook;
+    }
+    catch(error){
+        throw(error);
+    }
 };
 
 const getAllBooks = async () => {
-    const result = await dbConnection.query('SELECT * FROM books order by id');
-    const books = [];
-    for(const obj of result.rows){
-        const newBook = new Book(obj);
-        newBook.validate();
-        books.push(newBook);
-    };
-    return books;
+   try{
+        const result = await dbConnection.query('SELECT * FROM books order by id');
+        const books = [];
+        for(const obj of result.rows){
+            const newBook = new Book(obj);
+            newBook.validate();
+            books.push(newBook);
+        };
+        return books;
+    }
+    catch(error){
+        throw(error);
+    }
 };
 
 const getBook = async (bookId) => {
