@@ -51,6 +51,9 @@ app.put('/books/:id', bookController(pool).update);
 //Delete book by ID
 app.delete('/books/:id', bookController(pool).delete);
 
+//Get all books by an Author
+app.get('/authors/:authorid/books', bookController(pool).getByAuthor);
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

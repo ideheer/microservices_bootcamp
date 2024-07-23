@@ -83,6 +83,18 @@ const deleteBook = async (req, res) => {
     }
 };
 
+//Get books by Author
+const getBookByAuthor = async (req, res) => {
+    let authorId = req.params.authorid;
+    try{
+        const result = await bookService(dbConnection).getByAuthor(authorId);
+        res.json(result);
+    }
+    catch(error){
+        res.status(500).send(error.message);
+    }
+};
+
 export default function bookController(connection){
     dbConnection = connection;
     const controller = {
@@ -91,6 +103,7 @@ export default function bookController(connection){
         get: getBook,
         update: updateBook,
         delete: deleteBook,
+        getByAuthor: getBookByAuthor,
     }
     return controller;
 };

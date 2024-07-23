@@ -56,6 +56,22 @@ const deleteBook = async (bookId) => {
     }
 };
 
+const getBookByAuthor = async (authorId) => {
+    try{
+        const result = await dbConnection.query('SELECT * FROM public.books WHERE "authorId" = $1', [authorId]);
+        const books = [];
+        for(const obj of result.rows){
+            const newBook = new Book(obj);
+            newBook.validate();
+            books.push(newBook);
+        };
+        return books;
+    }
+    catch(error){
+        throw(error);
+    }
+}
+
 export default function bookService(connection){
     dbConnection = connection;
     const service = {
@@ -64,6 +80,7 @@ export default function bookService(connection){
         get: getBook,
         update: updateBook,
         getAll: getAllBooks,
+        getByAuthor: getBookByAuthor,
     };
     return service;
 };
