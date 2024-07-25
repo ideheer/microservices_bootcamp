@@ -1,5 +1,5 @@
 export default class NotFoundError extends Error{
-    constructor(message) {
+    constructor(message:string) {
         super(message);
     }
 };

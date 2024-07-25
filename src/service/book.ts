@@ -1,8 +1,10 @@
 import Book from "../model/book.js"
+import pg from "pg";
+import { BookPayload } from "../types/payloads";
 
-let dbConnection = null;
+let dbConnection:pg.Pool;
 
-const createBook = async ({title, publishedDate, authorId, summary}) => {
+const createBook = async ({title, publishedDate, authorId, summary}:BookPayload) => {
     try{
       const result = await dbConnection.query('INSERT INTO public.books(title, "publishedDate", "authorId", summary) VALUES ($1, $2, $3, $4) RETURNING *', [title, publishedDate, authorId, summary]);
       const createdBook = new Book(result.rows[0]);
@@ -30,7 +32,7 @@ const getAllBooks = async () => {
     }
 };
 
-const getBook = async (bookId) => {
+const getBook = async (bookId:string) => {
     const result = await dbConnection.query('SELECT * FROM books WHERE id = $1', [bookId]);
     if(result.rows.length == 0){
         return null; 
@@ -41,12 +43,12 @@ const getBook = async (bookId) => {
     };
 };
 
-const updateBook = async ({title, publishedDate, authorId, summary, id}) => {
+const updateBook = async ({title, publishedDate, authorId, summary, id}:BookPayload) => {
     const result = await dbConnection.query('UPDATE public.books SET title=$1, "publishedDate"=$2, "authorId"=$3, summary=$4 WHERE id=$5;', [title, publishedDate, authorId, summary, id]);
     return result.rowCount ? true : false;
 };
 
-const deleteBook = async (bookId) => {
+const deleteBook = async (bookId:string) => {
     try{
         const result = await dbConnection.query('DELETE FROM public.books WHERE id=$1', [bookId]);
         return result.rowCount ? true : false;
@@ -56,7 +58,7 @@ const deleteBook = async (bookId) => {
     }
 };
 
-const getBookByAuthor = async (authorId) => {
+const getBookByAuthor = async (authorId:string) => {
     try{
         const result = await dbConnection.query('SELECT * FROM public.books WHERE "authorId" = $1', [authorId]);
         const books = [];
@@ -72,7 +74,7 @@ const getBookByAuthor = async (authorId) => {
     }
 }
 
-export default function bookService(connection){
+export default function bookService(connection:pg.Pool){
     dbConnection = connection;
     const service = {
         create: createBook,

@@ -1,9 +1,11 @@
 import Author from "../model/author.js"
 import NotFoundError from "../errors/errors.js";
+import pg from "pg";
+import { AuthorPayload } from "../types/payloads.js";
 
-let dbConnection = null;
+let dbConnection:pg.Pool;
 
-const createAuthor = async ({name, bio}) => {
+const createAuthor = async ({name, bio}:AuthorPayload) => {
     try{
         const result = await dbConnection.query('INSERT INTO public.authors(name, bio) VALUES ($1, $2) RETURNING *;', [name, bio]);
         const createdAuthor = new Author(result.rows[0]);
@@ -31,7 +33,7 @@ const getAllAuthors = async () => {
     }
 };
 
-const getAuthor = async (authorId) => {
+const getAuthor = async (authorId:string) => {
     const result = await dbConnection.query('SELECT * FROM authors WHERE id = $1;', [authorId]);
     if(result.rows.length == 0){
         throw new NotFoundError("Not found."); 
@@ -42,7 +44,7 @@ const getAuthor = async (authorId) => {
     };
 };
 
-const updateAuthor = async ({name, bio, id}) => {
+const updateAuthor = async ({name, bio, id}:AuthorPayload) => {
     try{
         const result = await dbConnection.query('UPDATE public.authors SET name=$1, bio=$2 WHERE id=$3 RETURNING *;', [name, bio, id]);
         const updatedAuthor = new Author(result.rows[0]);
@@ -54,7 +56,7 @@ const updateAuthor = async ({name, bio, id}) => {
     }
 };
 
-const deleteAuthor = async (authorId) => {
+const deleteAuthor = async (authorId:string) => {
     try{
         const result = await dbConnection.query('DELETE FROM public.authors WHERE id=$1;', [authorId]);
         if(result.rowCount == 0){
@@ -67,7 +69,7 @@ const deleteAuthor = async (authorId) => {
     }
 };
 
-export default function authorService(connection){
+export default function authorService(connection:pg.Pool){
     dbConnection = connection;
     const service = {
         create: createAuthor,

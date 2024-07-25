@@ -1,13 +1,16 @@
 import bookService from "../service/book.js";
+import pg from "pg";
+import { BookPayload } from "../types/payloads";
+import { Request, Response } from 'express';
 
-let dbConnection = null;
+let dbConnection:pg.Pool;
 
-const createBook = async (req, res) => {
-    const bookPayload = {title:req.body.title, 
-      publishedDate:req.body.publishedDate, 
-      authorId:req.body.authorId,
-      summary: req.body.summary,
-      id: -1
+const createBook = async (req:Request, res:Response) => {
+    const bookPayload:BookPayload = {
+        title:req.body.title, 
+        publishedDate:req.body.publishedDate, 
+        authorId:req.body.authorId,
+        summary: req.body.summary
     };
     if (!bookPayload.title || !bookPayload.publishedDate || !bookPayload.authorId || !bookPayload.summary){
         res.status(400).send("Bad request. Missing required field(s).");
@@ -16,24 +19,24 @@ const createBook = async (req, res) => {
         const createdBook = await bookService(dbConnection).create(bookPayload);
         res.send(createdBook);
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };
 
 //Get all books
-const getAllBooks = async (req, res) => {
+const getAllBooks = async (req:Request, res:Response) => {
     try{
         const result = await bookService(dbConnection).getAll();
         res.json(result);
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };                 
 
 //Get book by id
-const getBook = async (req, res) => {
+const getBook = async (req:Request, res:Response) => {
     let bookId = req.params.id;
     try{
         const result = await bookService(dbConnection).get(bookId);
@@ -44,14 +47,14 @@ const getBook = async (req, res) => {
         res.json(result);
         }
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };
 
 //Update book by id
-const updateBook = async (req, res) => {
-    const bookPayload = {
+const updateBook = async (req:Request, res:Response) => {
+    const bookPayload:BookPayload = {
         title:req.body.title, 
         publishedDate:req.body.publishedDate, 
         authorId:req.body.authorId,
@@ -66,36 +69,36 @@ const updateBook = async (req, res) => {
         const result = await bookService(dbConnection).update(bookPayload);
         res.status(404).send('Not found');
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };
 
 //Delete book by id
-const deleteBook = async (req, res) => {
+const deleteBook = async (req:Request, res:Response) => {
     let bookId = req.params.id;
     try{
         const result = await bookService(dbConnection).delete(bookId);
         res.json({"Success":result});
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };
 
 //Get books by Author
-const getBookByAuthor = async (req, res) => {
+const getBookByAuthor = async (req:Request, res:Response) => {
     let authorId = req.params.authorid;
     try{
         const result = await bookService(dbConnection).getByAuthor(authorId);
         res.json(result);
     }
-    catch(error){
+    catch(error:any){
         res.status(500).send(error.message);
     }
 };
 
-export default function bookController(connection){
+export default function bookControllerFactory(connection:pg.Pool){
     dbConnection = connection;
     const controller = {
         create: createBook,

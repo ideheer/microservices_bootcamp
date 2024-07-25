@@ -1,10 +1,15 @@
+import { AuthorPayload } from "../types/payloads";
+
 export default class Author{
-    constructor(authorPayload) {
+    public name:string;
+    public bio:string;
+    public id:string;
+    constructor(authorPayload:AuthorPayload) {
         // console.log(authorPayload);
         const {name, bio, id} = authorPayload;
         this.name = name;
         this.bio = bio;
-        this.id = id;
+        this.id= id || "";
     }
     validate(){
         if(this.name && this.bio){
