@@ -1,4 +1,4 @@
-import bookService from "../service/book.js";
+import bookService from "../service/book";
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 import { Request, Response } from 'express';

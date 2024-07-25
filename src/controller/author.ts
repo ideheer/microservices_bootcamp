@@ -1,10 +1,8 @@
-import NotFoundError from "../errors/errors.js";
-import authorService from "../service/author.js";
+import NotFoundError from "../errors/errors";
+import authorService from "../service/author";
 import pg from "pg";
-import { AuthorPayload } from "../types/payloads.js";
+import { AuthorPayload } from "../types/payloads";
 import { Request, Response } from 'express';
-
-
 
 let dbConnection:pg.Pool;
 

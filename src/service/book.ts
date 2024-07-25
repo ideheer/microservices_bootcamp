@@ -1,4 +1,4 @@
-import Book from "../model/book.js"
+import Book from "../model/book"
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 
