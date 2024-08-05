@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch ./src/main.ts",
     "build": "tsc && tsc-alias --resolve-full-paths",
-    "prod": "node ./build/main.js"
+    "prod": "node ./build/main.js",
+    "test": "jest"
   },
   "author": "Ian de Heer",
   "license": "MIT",
