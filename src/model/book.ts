@@ -1,4 +1,4 @@
-import { BookPayload } from "../types/payloads";
+import { BookPayload } from "@src/types/payloads";
 
 export default class Book{
     public title:string;

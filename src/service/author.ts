@@ -1,7 +1,7 @@
-import Author from "../model/author"
-import NotFoundError from "../errors/errors";
+import Author from "@src/model/author";
+import NotFoundError from "@src/errors/errors";
 import pg from "pg";
-import { AuthorPayload } from "../types/payloads";
+import { AuthorPayload } from "@src/types/payloads";
 
 let dbConnection:pg.Pool;
 
