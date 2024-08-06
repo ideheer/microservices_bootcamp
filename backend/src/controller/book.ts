@@ -1,6 +1,6 @@
-import bookService from "../service/book";
+import bookService from "@src/service/book";
 import pg from "pg";
-import { BookPayload } from "../types/payloads";
+import { BookPayload } from "@src/types/payloads";
 import { Request, Response } from 'express';
 
 let dbConnection:pg.Pool;

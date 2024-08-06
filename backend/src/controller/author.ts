@@ -1,7 +1,7 @@
-import NotFoundError from "../errors/errors";
-import authorService from "../service/author";
+import NotFoundError from "@src/errors/errors";
+import authorService from "@src/service/author";
 import pg from "pg";
-import { AuthorPayload } from "../types/payloads";
+import { AuthorPayload } from "@src/types/payloads";
 import { Request, Response } from 'express';
 
 let dbConnection:pg.Pool;

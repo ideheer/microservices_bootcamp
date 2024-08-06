@@ -1,4 +1,4 @@
-import { AuthorPayload } from "../types/payloads";
+import { AuthorPayload } from "@src/types/payloads";
 
 export default class Author{
     public name:string;

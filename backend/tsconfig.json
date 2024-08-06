@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
@@ -9,13 +9,19 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./build",
-    "baseUrl": "./src",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": [
+        "./src/*"
+      ],
+    }
   },
   "include": [
-    "src"
+    "src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "build"
   ]
 }

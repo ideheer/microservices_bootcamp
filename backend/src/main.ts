@@ -1,5 +1,5 @@
-import authorControllerFactory from './controller/author';
-import bookControllerFactory from './controller/book';
+import authorControllerFactory from "@src/controller/author";
+import bookControllerFactory from "@src/controller/book";
 import express from 'express';
 import pg from "pg";
 
