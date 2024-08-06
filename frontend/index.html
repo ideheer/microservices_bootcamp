@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookstore API Frontend</title>
+  </head>
+
+  <body>
+    <h1>Bookstore API Frontend</h1>
+
+    <h2>Authors</h2>
+    <form id="author-form">
+      <input type="hidden" id="author-id" />
+      <input type="text" id="author-name" placeholder="Author Name" required />
+      <input type="text" id="author-bio" placeholder="Author Bio" required />
+      <button type="submit">Save Author</button>
+    </form>
+    <ul id="author-list"></ul>
+
+    <h2>Books</h2>
+    <form id="book-form">
+      <input type="hidden" id="book-id" />
+      <input type="text" id="book-title" placeholder="Book Title" required />
+      <input
+        type="text"
+        id="book-summary"
+        placeholder="Book Summary"
+        required
+      />
+      <select id="book-author" required></select>
+      <input type="date" id="book-datePublished" required />
+      <button type="submit">Save Book</button>
+    </form>
+    <ul id="book-list"></ul>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
