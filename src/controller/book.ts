@@ -12,9 +12,12 @@ const createBook = async (req:Request, res:Response) => {
         authorId:req.body.authorId,
         summary: req.body.summary
     };
+
     if (!bookPayload.title || !bookPayload.publishedDate || !bookPayload.authorId || !bookPayload.summary){
         res.status(400).send("Bad request. Missing required field(s).");
+        return;
     };
+
     try{
         const createdBook = await bookService(dbConnection).create(bookPayload);
         res.send(createdBook);

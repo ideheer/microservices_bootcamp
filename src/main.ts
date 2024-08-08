@@ -1,11 +1,13 @@
 import authorControllerFactory from './controller/author';
 import bookControllerFactory from './controller/book';
-import express from 'express';
+import express, { Request } from 'express';
 import pg from "pg";
+import cors from "cors";
 
 const { Pool } = pg;
 
 const app = express();
+app.use(cors<Request>());
 
 const pool = new Pool({
   user: 'admin',
@@ -52,6 +54,8 @@ app.delete('/books/:id', bookControllerObj.delete);
 
 //Get all books by an Author
 app.get('/authors/:authorid/books', bookControllerObj.getByAuthor);
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
