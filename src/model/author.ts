@@ -1,10 +1,9 @@
-import { AuthorPayload } from "../types/payloads";
-
-export default class Author{
+import { AuthorPayload, AuthorListingPayload } from "../types/payloads";
+export class Author{
     public name:string;
     public bio:string;
     public id:string;
-    constructor(authorPayload:AuthorPayload) {
+    constructor(authorPayload: AuthorPayload) {
         // console.log(authorPayload);
         const {name, bio, id} = authorPayload;
         this.name = name;
@@ -18,5 +17,15 @@ export default class Author{
         else{
             throw new Error("Invalid Author information");
         }
+    }
+};
+
+export class AuthorListing{
+    public name:string;
+    public id:string;
+    constructor(authorListingPayload: AuthorListingPayload) {
+        const {name, id} = authorListingPayload;
+        this.name = name;
+        this.id= id || "";
     }
 };

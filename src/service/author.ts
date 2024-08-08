@@ -1,4 +1,4 @@
-import Author from "../model/author"
+import {Author, AuthorListing} from "../model/author"
 import NotFoundError from "../errors/errors";
 import pg from "pg";
 import { AuthorPayload } from "../types/payloads";
@@ -19,14 +19,14 @@ const createAuthor = async ({name, bio}:AuthorPayload) => {
 
 const getAllAuthors = async () => {
     try{
-        const result = await dbConnection.query('SELECT * FROM authors order by id;');
-        const authors = [];
-        for(const obj of result.rows){
-            const newAuthor = new Author(obj);
-            newAuthor.validate();
-            authors.push(newAuthor);
+        const result = await dbConnection.query('SELECT name, id FROM authors order by id;');
+        const authorList = [];
+        
+        for(const currentRow of result.rows){
+            const authorListing = new AuthorListing(currentRow);
+            authorList.push(authorListing);
         }
-        return authors;
+        return authorList;
     }
     catch(error){
         throw(error);

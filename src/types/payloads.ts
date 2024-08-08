@@ -11,3 +11,8 @@ export type AuthorPayload = {
     bio:string,
     id?:string
 };
+
+export type AuthorListingPayload = {
+    name:string,
+    id:string
+};

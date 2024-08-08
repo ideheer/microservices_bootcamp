@@ -7,6 +7,7 @@ import { Request, Response } from 'express';
 let dbConnection:pg.Pool;
 
 //Create author
+
 const createAuthor = async (req:Request, res:Response) => {
     const authorPayload:AuthorPayload = {
         name:req.body.name, 
@@ -28,13 +29,13 @@ const createAuthor = async (req:Request, res:Response) => {
 //Get all authors
 const getAllAuthors = async (req:Request, res:Response) => {
     try{
-        const result = await authorService(dbConnection).getAll();
-        res.json(result);
+        const authorList = await authorService(dbConnection).getAll();
+        res.json(authorList);
     }
     catch(error:any){
         res.status(500).send(error.message);
     }
-};                 
+};
 
 //Get author by id
 const getAuthor = async (req:Request, res:Response) => {
