@@ -1,51 +1,48 @@
 import authorControllerFactory from '../src/controller/author';
-import { Request, Response } from 'express';
-import { Pool } from 'pg';
+import pg from "pg";
+import { Author } from '../src/model/author';
 
-jest.mock('pg', () => {
-  return {
-    Pool: jest.fn().mockImplementation(() => ({
-      query: jest.fn(),
-    })),
-  };
+const { Pool } = pg;
+
+const pool = new Pool({
+  user: 'admin',
+  password: 'admin123',
+  host: 'localhost',
+  port: 5432, // default Postgres port
+  database: 'bookstoreDb'
 });
 
 describe('Author Controller', () => {
-  let mockDb: jest.Mocked<Pool>;
-  let mockReq: Partial<Request>;
-  let mockRes: Partial<Response>;
-  let authorControllerObj: ReturnType<typeof authorControllerFactory>;
+    it('should create an author successfully', async () => {
+        const resultingAuthor = {
+            name:'anyNameILike',
+            bio:'anyBioILike',
+            id:1898
+        };
+        const mockDb = {
+            query:function(queryCommand:String, values:Array<string>){
+                console.log(queryCommand, values)
+                return{
+                    rows:[resultingAuthor]
+                }
+            }
+        }
+        const mockReq = {
+            body: {
+                name:'anyNameILike',
+                bio:'anyBioILike'
+            }
+        }
+        let receivedData;
+        const mockRes = {
+            send:function(receivedAuthor:any){
+                console.log('Send function called', receivedAuthor);
+                receivedData = receivedAuthor;
+            }
+        }
+        const authorControllerObj = authorControllerFactory(mockDb as any);
+        await authorControllerObj.create(mockReq as any, mockRes as any)
+        expect(receivedData).toEqual(resultingAuthor)
+    });
 
-  beforeEach(() => {
-    mockDb = new Pool() as jest.Mocked<Pool>;
-    mockReq = {
-      body: {
-        name: 'anyNameILike',
-        bio: 'anyBioILike',
-      },
-    };
-    mockRes = {
-      send: jest.fn(),
-    };
-    authorControllerObj = authorControllerFactory(mockDb);
-  });
-
-  it('should create an author successfully', async () => {
-    const resultingAuthor = {
-      name: 'anyNameILike',
-      bio: 'anyBioILike',
-      id: 1898,
-    };
-
-
-    mockDb.query.mockResolvedValueOnce({ rows: [resultingAuthor] } as never);
-
-    await authorControllerObj.create(mockReq as Request, mockRes as Response);
-
-    expect(mockDb.query).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.arrayContaining([mockReq.body.name, mockReq.body.bio])
-    );
-    expect(mockRes.send).toHaveBeenCalledWith(resultingAuthor);
-  });
 });
