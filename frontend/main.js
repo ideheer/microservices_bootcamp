@@ -20,17 +20,16 @@ async function loadAuthors() {
 
   authors.forEach((author) => {
     const li = document.createElement("li");
-    li.textContent = `${author.name} - ${author.bio}`;
 
-    const editButton = document.createElement("button");
-    editButton.textContent = "Edit";
-    editButton.onclick = () => editAuthor(author);
+    const authorLink = document.createElement("a");
+    authorLink.href = `author.html?authorId=${author.id}`;
+    authorLink.textContent = author.name;
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.onclick = () => deleteAuthor(author.id);
 
-    li.appendChild(editButton);
+    li.appendChild(authorLink);
     li.appendChild(deleteButton);
     authorList.appendChild(li);
 
@@ -50,7 +49,7 @@ async function loadBooks() {
 
   books.forEach((book) => {
     const li = document.createElement("li");
-    li.textContent = `${book.title} - ${book.summary} (Author ID: ${book.authorId}, Published: ${book.publishedDate})`;
+    li.textContent = `${book.title} - ${book.summary} (Author ID: ${book.authorId}, Published: ${book.datePublished})`;
 
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
@@ -97,10 +96,10 @@ async function saveBook(event) {
   const id = document.getElementById("book-id").value;
   const title = document.getElementById("book-title").value;
   const summary = document.getElementById("book-summary").value;
-  const authorId = document.getElementById("book-author").value + "";
-  const publishedDate = document.getElementById("book-datePublished").value;
+  const authorId = document.getElementById("book-author").value;
+  const datePublished = document.getElementById("book-datePublished").value;
 
-  const book = { title, summary, authorId, publishedDate };
+  const book = { title, summary, authorId, datePublished };
 
   if (id) {
     await fetch(`${apiUrl}/books/${id}`, {
@@ -120,12 +119,6 @@ async function saveBook(event) {
   loadBooks();
 }
 
-async function editAuthor(author) {
-  document.getElementById("author-id").value = author.id;
-  document.getElementById("author-name").value = author.name;
-  document.getElementById("author-bio").value = author.bio;
-}
-
 async function deleteAuthor(id) {
   await fetch(`${apiUrl}/authors/${id}`, { method: "DELETE" });
   loadAuthors();
@@ -136,7 +129,7 @@ async function editBook(book) {
   document.getElementById("book-title").value = book.title;
   document.getElementById("book-summary").value = book.summary;
   document.getElementById("book-author").value = book.authorId;
-  document.getElementById("book-datePublished").value = book.publishedDate;
+  document.getElementById("book-datePublished").value = book.datePublished;
 }
 
 async function deleteBook(id) {

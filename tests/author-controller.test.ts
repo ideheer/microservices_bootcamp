@@ -2,16 +2,6 @@ import authorControllerFactory from '../src/controller/author';
 import pg from "pg";
 import Author from '../src/model/author';
 
-const { Pool } = pg;
-
-const pool = new Pool({
-  user: 'admin',
-  password: 'admin123',
-  host: 'localhost',
-  port: 5432, // default Postgres port
-  database: 'bookstoreDb'
-});
-
 describe('Author Controller', () => {
     it('should create an author successfully', async () => {
         const resultingAuthor = {
