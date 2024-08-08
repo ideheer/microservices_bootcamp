@@ -1,6 +1,17 @@
 services:
-  database:
-    image: postgres:12
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    develop:
+      watch:
+        - path: ./frontend/src
+          target: /usr/share/nginx/html/
+          action: sync+restart
+    ports:
+      - "80:80"
+  db:
+    image: postgres:16
     environment:
       POSTGRES_DB: bookstoreDb
       POSTGRES_USER: admin
