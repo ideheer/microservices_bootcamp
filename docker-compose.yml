@@ -1,6 +1,45 @@
 services:
-  database:
-    image: postgres:12
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    develop:
+      watch:
+        - path: ./frontend/src
+          target: /usr/share/nginx/html/
+          action: sync+restart
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    networks:
+      - frontend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    develop:
+      watch:
+        - path: ./backend/src
+          target: /usr/src/app
+          action: rebuild
+        - path: ./backend/package.json
+          action: rebuild
+        - path: ./backend/package-lock.json
+          action: rebuild
+        - path: ./backend/tsconfig.json
+          action: rebuild
+    ports:
+      - "3000:3000"
+    environment:
+      - name=value
+    depends_on:
+      - db
+    networks:
+      - frontend
+      - backend
+  db:
+    image: postgres:16
     environment:
       POSTGRES_DB: bookstoreDb
       POSTGRES_USER: admin
@@ -8,4 +47,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
