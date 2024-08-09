@@ -1,7 +1,7 @@
 export type BookPayload = {
     title:string,
-    publishedDate:string,
-    authorId:string,
+    publisheddate:string,
+    authorid:string,
     summary:string,
     id?:string
 };

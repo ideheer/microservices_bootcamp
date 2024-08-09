@@ -8,11 +8,11 @@ let dbConnection:pg.Pool;
 const createBook = async (req:Request, res:Response) => {
     const bookPayload:BookPayload = {
         title:req.body.title, 
-        publishedDate:req.body.publishedDate, 
-        authorId:req.body.authorId,
+        publisheddate:req.body.publisheddate, 
+        authorid:req.body.authorid,
         summary: req.body.summary
     };
-    if (!bookPayload.title || !bookPayload.publishedDate || !bookPayload.authorId || !bookPayload.summary){
+    if (!bookPayload.title || !bookPayload.publisheddate || !bookPayload.authorid || !bookPayload.summary){
         res.status(400).send("Bad request. Missing required field(s).");
     };
     try{
@@ -56,13 +56,13 @@ const getBook = async (req:Request, res:Response) => {
 const updateBook = async (req:Request, res:Response) => {
     const bookPayload:BookPayload = {
         title:req.body.title, 
-        publishedDate:req.body.publishedDate, 
-        authorId:req.body.authorId,
+        publisheddate:req.body.publisheddate, 
+        authorid:req.body.authorid,
         summary:req.body.summary,
         id:req.params.id
       };
     //console.log(bookPayload);
-    if (!bookPayload.title || !bookPayload.publishedDate || !bookPayload.authorId || !bookPayload.summary){
+    if (!bookPayload.title || !bookPayload.publisheddate || !bookPayload.authorid || !bookPayload.summary){
         res.status(400).send("Bad request. Missing required field(s).");
     };
     try{

@@ -1,4 +1,5 @@
 services:
+  # Docker-compose for each of the 3-tier services: Frontend, db, and backend
   frontend:
     build:
       context: ./frontend
@@ -12,6 +13,7 @@ services:
           action: rebuild
   db:
     image: postgres:16
+    #TODO Set environment variables for user/pass
     environment:
       POSTGRES_DB: bookstoreDb
       POSTGRES_USER: admin
