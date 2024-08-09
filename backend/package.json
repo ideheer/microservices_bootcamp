@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "src/main.js",
   "scripts": {
-    "dev": "",
-    "build": "",
-    "prod": "",
+    "build": "tsc",
+    "prod": "node ./build/main.js",
     "test": "jest"
   },
   "author": "Ian de Heer",
