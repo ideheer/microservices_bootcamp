@@ -9,7 +9,7 @@ services:
       watch:
         - path: ./frontend/src
           target: /usr/share/nginx/html/
-          action: sync+restart
+          action: rebuild
   db:
     image: postgres:16
     environment:
