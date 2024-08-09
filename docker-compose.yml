@@ -11,13 +11,29 @@ services:
           target: /usr/share/nginx/html/
           action: sync+restart
   db:
-   image: postgres:16
-   environment:
-    POSTGRES_DB: bookstoreDb
-    POSTGRES_USER: admin
-    POSTGRES_PASSWORD: admin123
-   ports:
-    - "5432:5432"
-   volumes:
-     - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-     - ./db/data:/var/lib/postgresql/data
+    image: postgres:16
+    environment:
+      POSTGRES_DB: bookstoreDb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - path: ./backend/src
+          action: rebuild
+        - path: ./backend/package.json
+          action: rebuild
+        - path: ./backend/package-lock.json
+          action: rebuild
+        - path: ./backend/tsconfig.json
+          action: rebuild
