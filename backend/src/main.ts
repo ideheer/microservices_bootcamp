@@ -3,6 +3,7 @@ import bookControllerFactory from "./controller/book";
 import express from "express";
 import pg from "pg";
 import cors from "cors";
+import morgan from "morgan"
 
 const { Pool } = pg;
 
@@ -16,6 +17,7 @@ const pool = new Pool({
   database: "bookstoreDb",
 });
 
+app.use(morgan("combined"))
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 
