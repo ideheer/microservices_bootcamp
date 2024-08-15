@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 
 let dbConnection:pg.Pool;
 
+// Create books
 const createBook = async (req:Request, res:Response) => {
     const bookPayload:BookPayload = {
         title:req.body.title, 
