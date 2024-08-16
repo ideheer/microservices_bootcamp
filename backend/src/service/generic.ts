@@ -70,14 +70,16 @@ export function genericService<T>(
       const commaSeparatedFieldNames = payloadKeys.join(", "); // publisheddate, summary, title, authorid
       const commaSeparatedFieldValues = payloadValuesArray.join(", "); // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
 
-      let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues})`;
+      let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues}) RETURNING *;`;
+      // console.log(query);
       const result = await connection.query(query);
-
+      // console.log(result);
       const created = new ModelClass(result.rows[0]) as Author | Book;
       created.validate();
 
       return created as T;
     } catch (error) {
+      // console.log(error);
       throw error;
     }
   };
