@@ -47,6 +47,24 @@ const getAllAuthors = async (req: Request, res: Response) => {
 const getAuthor = async (req: Request, res: Response) => {
   let authorId = req.params.id;
   try {
+    const result = await genericService<Author>(
+      dbConnection,
+      "authors",
+      Author
+    ).get(authorId);
+    res.json(result);
+  } catch (error: any) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
+  }
+};
+/*Before Generic
+const getAuthor = async (req: Request, res: Response) => {
+  let authorId = req.params.id;
+  try {
     const result = await authorService(dbConnection).get(authorId);
     res.json(result);
   } catch (error: any) {
@@ -57,6 +75,7 @@ const getAuthor = async (req: Request, res: Response) => {
     }
   }
 };
+*/
 
 //Update author by id
 const updateAuthor = async (req: Request, res: Response) => {
@@ -70,8 +89,14 @@ const updateAuthor = async (req: Request, res: Response) => {
     res.status(400).send("Bad request. Missing required field(s).");
   }
   try {
-    const updatedAuthor = await authorService(dbConnection).update(
+    const updatedAuthor = await genericService<Author>(
+      dbConnection,
+      "authors",
+      Author
+    ).update(
       authorPayload
+      // const updatedAuthor = await authorService(dbConnection).update(
+      //   authorPayload
     );
     res.send(updatedAuthor);
   } catch (error: any) {
