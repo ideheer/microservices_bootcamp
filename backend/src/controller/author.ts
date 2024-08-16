@@ -1,8 +1,12 @@
 import NotFoundError from "../errors/errors";
 import authorService from "../service/author";
 import pg from "pg";
+
+import { Author } from "../model/author";
 import { AuthorPayload } from "../types/payloads";
 import { Request, Response } from "express";
+
+import { genericService, ModelConstructor } from "../service/generic";
 
 let dbConnection: pg.Pool;
 
@@ -20,9 +24,9 @@ const createAuthor = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const createdAuthor = await authorService(dbConnection).create(
-      authorPayload
-    );
+    const service = genericService<Author>(dbConnection, "authors", Author);
+    const createdAuthor = await service.create(authorPayload);
+
     res.send(createdAuthor);
   } catch (error: any) {
     res.status(500).send(error.message);
