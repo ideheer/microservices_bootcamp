@@ -84,8 +84,28 @@ export function genericService<T>(
     }
   };
 
+  const getAll = async () =>{
+    try {
+      console.log("this should be here.")
+      let query = `SELECT * FROM ${tableName} order by id;`;
+      console.log(query)
+      const result = await connection.query(query);
+      const entityList = [];
+      for(const obj of result.rows){
+        const newEntity = new ModelClass(obj) as Author | Book;
+        newEntity.validate();
+        entityList.push(newEntity);
+      };
+      return entityList;
+    } 
+    catch(error){
+      throw(error);
+    }
+  };
+
   const service = {
     create,
+    getAll,
   };
   return service;
 }

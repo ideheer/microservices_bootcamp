@@ -20,23 +20,23 @@ const createAuthor = async ({ name, bio }: AuthorPayload): Promise<Author> => {
   }
 };
 
-// TODO(@deheero): port this to generic.ts
-const getAllAuthors = async () => {
-  try {
-    const result = await dbConnection.query(
-      "SELECT name, id FROM authors order by id;"
-    );
-    const authorList = [];
+// Deprecated
+// const getAllAuthors = async () => {
+//   try {
+//     const result = await dbConnection.query(
+//       "SELECT name, id FROM authors order by id;"
+//     );
+//     const authorList = [];
 
-    for (const currentRow of result.rows) {
-      const authorListing = new AuthorListing(currentRow);
-      authorList.push(authorListing);
-    }
-    return authorList;
-  } catch (error) {
-    throw error;
-  }
-};
+//     for (const currentRow of result.rows) {
+//       const authorListing = new AuthorListing(currentRow);
+//       authorList.push(authorListing);
+//     }
+//     return authorList;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 // TODO(@unnamedsunshine): port this to generic.ts
 const getAuthor = async (authorId: string) => {

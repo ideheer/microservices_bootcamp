@@ -10,10 +10,6 @@ import { genericService, ModelConstructor } from "../service/generic";
 
 let dbConnection: pg.Pool;
 
-//Create author
-//change test
-//another change
-
 const createAuthor = async (req: Request, res: Response) => {
   const authorPayload: AuthorPayload = {
     name: req.body.name,
@@ -25,6 +21,7 @@ const createAuthor = async (req: Request, res: Response) => {
   }
   try {
     const service = genericService<Author>(dbConnection, "authors", Author);
+    console.log("SanityCheck: createAuthor Controller hit")
     const createdAuthor = await service.create(authorPayload);
 
     res.send(createdAuthor);
@@ -36,7 +33,7 @@ const createAuthor = async (req: Request, res: Response) => {
 //Get all authors
 const getAllAuthors = async (req: Request, res: Response) => {
   try {
-    const authorList = await authorService(dbConnection).getAll();
+    const authorList = await genericService(dbConnection, "authors", Author).getAll();
     res.json(authorList);
   } catch (error: any) {
     res.status(500).send(error.message);

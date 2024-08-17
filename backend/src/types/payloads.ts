@@ -6,6 +6,12 @@ export type BookPayload = {
     id?:string
 };
 
+export type BookListingPayload = {
+    title:string,
+    authorid:string,
+    id:string
+}
+
 export type AuthorPayload = {
     name:string,
     bio:string,
