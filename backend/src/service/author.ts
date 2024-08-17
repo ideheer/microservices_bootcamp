@@ -88,7 +88,6 @@ export default function authorService(connection: pg.Pool) {
     delete: deleteAuthor,
     get: getAuthor,
     update: updateAuthor,
-    getAll: getAllAuthors,
   };
   return service;
 }

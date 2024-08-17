@@ -83,7 +83,6 @@ export default function bookService(connection:pg.Pool){
         delete: deleteBook,
         get: getBook,
         update: updateBook,
-        getAll: getAllBooks,
         getByAuthor: getBookByAuthor,
     };
     return service;
