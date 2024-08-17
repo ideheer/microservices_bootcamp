@@ -106,17 +106,11 @@ export function genericService<T>(
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const update = async (payload: any) => {
-    //////NOT DRY - same as create
-    const payloadKeys = Object.keys(payload);
-    console.log(payloadKeys);
-    const payloadValues = Object.values(payload);
-    const payloadValuesArray = payloadValues.map((value) => {
-      return "'" + value + "'";
-    });
-    const commaSeparatedFieldNames = payloadKeys.join(", ");
-    const commaSeparatedFieldValues = payloadValuesArray.join(", ");
-    ////////
-    let query = `UPDATE public.${tableName} SET ${commaSeparatedFieldValues} WHERE id=${payload.id} RETURNING *;`;
+    const updateFields = Object.entries(payload)
+      .filter(([key]) => key !== "id")
+      .map(([key, value]) => `${key}='${value}'`)
+      .join(", ");
+    let query = `UPDATE public.${tableName} SET ${updateFields} WHERE id=${payload.id} RETURNING *;`;
     console.log(query);
     try {
       const result = await connection.query(
