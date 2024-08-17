@@ -3,7 +3,7 @@ import Book from "../model/book"
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 import { Request, Response } from "express";
-import { genericService } from "service/generic";
+import { genericService } from "../service/generic";
 
 let dbConnection: pg.Pool;
 
