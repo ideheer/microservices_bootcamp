@@ -84,7 +84,7 @@ export function genericService<T>(
     }
   };
 
-  const getAll = async () =>{
+  const getAll = async () : Promise<T> => {    
     try {
       let query = `SELECT * FROM ${tableName} order by id;`;
       console.log(query)
@@ -95,7 +95,7 @@ export function genericService<T>(
         newEntity.validate();
         entityList.push(newEntity);
       };
-      return entityList;
+      return entityList as T;
     } 
     catch(error){
       throw(error);

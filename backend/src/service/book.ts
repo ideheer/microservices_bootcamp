@@ -16,24 +16,6 @@ const createBook = async ({title, publisheddate, authorid, summary}:BookPayload)
     }
 };
 
-//Deprecated
-// const getAllBooks = async () => {
-//    try{
-//         console.log("This shouldn't be here")
-//         const result = await dbConnection.query('SELECT * FROM books order by id');
-//         const books = [];
-//         for(const obj of result.rows){
-//             const newBook = new Book(obj);
-//             newBook.validate();
-//             books.push(newBook);
-//         };
-//         return books;
-//     }
-//     catch(error){
-//         throw(error);
-//     }
-// };
-
 const getBook = async (bookId:string) => {
     const result = await dbConnection.query('SELECT * FROM books WHERE id = $1', [bookId]);
     if(result.rows.length == 0){
