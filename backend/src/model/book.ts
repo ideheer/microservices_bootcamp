@@ -1,4 +1,4 @@
-import { BookPayload } from "../types/payloads";
+import { BookPayload, BookListingPayload } from "../types/payloads";
 
 export default class Book{
     public title:string;
@@ -22,5 +22,17 @@ export default class Book{
         else{
             throw new Error("Invalid Book information");
         }
+    }
+};
+
+export class BookListing{
+    public title:string;
+    public authorid:string;
+    public id:string;
+    constructor(bookListingPayload: BookListingPayload) {
+        const {title, authorid, id} = bookListingPayload;
+        this.title = title;
+        this.authorid = authorid;
+        this.id= id || "";
     }
 };

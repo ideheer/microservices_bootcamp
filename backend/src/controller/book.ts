@@ -1,7 +1,9 @@
 import bookService from "../service/book";
+import Book from "../model/book"
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 import { Request, Response } from "express";
+import { genericService } from "../service/generic";
 
 let dbConnection: pg.Pool;
 
@@ -31,7 +33,7 @@ const createBook = async (req: Request, res: Response) => {
 //Get all books
 const getAllBooks = async (req: Request, res: Response) => {
   try {
-    const result = await bookService(dbConnection).getAll();
+    const result = await genericService(dbConnection, "books", Book).getAll();
     res.json(result);
   } catch (error: any) {
     res.status(500).send(error.message);
