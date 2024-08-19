@@ -1,3 +1,15 @@
-FROM nginx:1.27
+FROM node:20.16 AS build
 
-COPY ./src /usr/share/nginx/html/
+WORKDIR /usr/src/app
+
+COPY package.json package-lock.json ./
+RUN npm install
+
+COPY tsconfig.json ./
+COPY . .
+
+RUN npm run build
+
+FROM nginx:1.27 AS runtime
+
+COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html/

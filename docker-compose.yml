@@ -9,7 +9,12 @@ services:
     develop:
       watch:
         - path: ./frontend/src
-          target: /usr/share/nginx/html/
+          action: rebuild
+        - path: ./frontend/package.json
+          action: rebuild
+        - path: ./frontend/package-lock.json
+          action: rebuild
+        - path: ./frontend/tsconfig.json
           action: rebuild
   db:
     image: postgres:16
