@@ -52,6 +52,7 @@ const getAuthor = async (authorId: string) => {
   }
 };
 
+//TODO(@unnamedsunshine)
 const updateAuthor = async ({ name, bio, id }: AuthorPayload) => {
   try {
     const result = await dbConnection.query(
