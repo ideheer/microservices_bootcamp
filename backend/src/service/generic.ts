@@ -79,11 +79,17 @@ export function genericService<T>(
     }
   };
 
-  const getAll = async (): Promise<T> => {
-    try {
-      let query = `SELECT * FROM ${tableName} order by id;`;
+  interface PaginationParams {
+    page: number;
+    pageSize: number;
+  }
 
-      const result = await connection.query(query);
+  const getAll = async ({ page, pageSize }: PaginationParams): Promise<T> => {
+    try {
+      const offset = page * pageSize;
+      let query = `SELECT * FROM ${tableName} ORDER BY id LIMIT $1 OFFSET $2;`;
+
+      const result = await connection.query(query, [pageSize, offset]);
       const entityList = [];
       for (const obj of result.rows) {
         const newEntity = new ModelClass(obj) as Author | Book;
