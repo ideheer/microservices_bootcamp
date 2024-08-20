@@ -19,7 +19,9 @@ export const fetchAuthorData = async ({
   });
 
   return {
-    data: response.data,
-    total: 99999, // we don't have a good structure to provide metadata
+    data: response.data.data,
+    total: response.data.total, // we don't have a good structure to provide metadata
   };
 };
+
+// {"total": 200, "data": [{},{}]}

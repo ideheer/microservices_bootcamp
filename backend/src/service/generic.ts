@@ -87,16 +87,24 @@ export function genericService<T>(
   const getAll = async ({ page, pageSize }: PaginationParams): Promise<T> => {
     try {
       const offset = page * pageSize;
-      let query = `SELECT * FROM ${tableName} ORDER BY id LIMIT $1 OFFSET $2;`;
+      let dataQuery = `SELECT * FROM ${tableName} ORDER BY id LIMIT $1 OFFSET $2;`;
+      let totalQuery = `SELECT COUNT(*) AS cnt FROM ${tableName}`;
 
-      const result = await connection.query(query, [pageSize, offset]);
+      const dataResult = await connection.query(dataQuery, [pageSize, offset]);
+      const totalResult = await connection.query(totalQuery);
+
       const entityList = [];
-      for (const obj of result.rows) {
+      for (const obj of dataResult.rows) {
         const newEntity = new ModelClass(obj) as Author | Book;
         newEntity.validate();
         entityList.push(newEntity);
       }
-      return entityList as T;
+
+      const responseObject = {
+        total: parseInt(totalResult.rows[0]["cnt"]),
+        data: entityList,
+      };
+      return responseObject as T;
     } catch (error) {
       throw error;
     }
