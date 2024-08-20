@@ -1,6 +1,5 @@
-import Book from "../model/book"
 import pg from "pg";
-import { BookPayload } from "../types/payloads";
+import { Book } from "../model/book"
 
 let dbConnection:pg.Pool;
 
