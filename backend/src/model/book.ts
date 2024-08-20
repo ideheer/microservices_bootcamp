@@ -1,6 +1,6 @@
 import { BookPayload, BookListingPayload } from "../types/payloads";
 
-export default class Book{
+export class Book{
     public title:string;
     public publisheddate:string;
     public authorid:string;
