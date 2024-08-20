@@ -21,6 +21,7 @@ function App() {
         hideFooter={false}
         hideFooterPagination={false}
         hideFooterSelectedRowCount={false}
+        paginationMode={"client"}
       />
     </div>
   );
