@@ -11,7 +11,6 @@ export function genericService<T>(
   ModelClass: ModelConstructor<T>
 ) {
   const create = async (payload: any): Promise<T> => {
- 
     const payloadKeys = Object.keys(payload); // ['publisheddate', 'summary', 'title', 'authorid']
     const payloadValues = Object.values(payload); // ['2024-08-12', 'Very good book', 'Name of the Wind', '4']
 
@@ -28,7 +27,7 @@ export function genericService<T>(
       const commaSeparatedFieldValues = payloadValuesArray.join(", "); // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
 
       let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues}) RETURNING *;`;
-      
+
       const result = await connection.query(query);
       // console.log(result);
       const created = new ModelClass(result.rows[0]) as Author | Book;
@@ -80,21 +79,34 @@ export function genericService<T>(
     }
   };
 
-  const getAll = async () : Promise<T> => {    
-    try {
-      let query = `SELECT * FROM ${tableName} order by id;`;
+  interface PaginationParams {
+    page: number;
+    pageSize: number;
+  }
 
-      const result = await connection.query(query);
+  const getAll = async ({ page, pageSize }: PaginationParams): Promise<T> => {
+    try {
+      const offset = page * pageSize;
+      let dataQuery = `SELECT * FROM ${tableName} ORDER BY id LIMIT $1 OFFSET $2;`;
+      let totalQuery = `SELECT COUNT(*) AS cnt FROM ${tableName}`;
+
+      const dataResult = await connection.query(dataQuery, [pageSize, offset]);
+      const totalResult = await connection.query(totalQuery);
+
       const entityList = [];
-      for(const obj of result.rows){
+      for (const obj of dataResult.rows) {
         const newEntity = new ModelClass(obj) as Author | Book;
         newEntity.validate();
         entityList.push(newEntity);
+      }
+
+      const responseObject = {
+        total: parseInt(totalResult.rows[0]["cnt"]),
+        data: entityList,
       };
-      return entityList as T;
-    } 
-    catch(error){
-      throw(error);
+      return responseObject as T;
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -102,7 +114,7 @@ export function genericService<T>(
     create,
     get,
     getAll,
-    update
+    update,
   };
   return service;
 }

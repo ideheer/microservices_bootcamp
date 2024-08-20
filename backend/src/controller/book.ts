@@ -1,5 +1,5 @@
 import bookService from "../service/book";
-import Book from "../model/book"
+import Book from "../model/book";
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 import { Request, Response } from "express";
@@ -33,7 +33,13 @@ const createBook = async (req: Request, res: Response) => {
 //Get all books
 const getAllBooks = async (req: Request, res: Response) => {
   try {
-    const result = await genericService(dbConnection, "books", Book).getAll();
+    const page = parseInt(req.query.page as string) || 0;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+    const result = await genericService(dbConnection, "books", Book).getAll({
+      page,
+      pageSize,
+    });
     res.json(result);
   } catch (error: any) {
     res.status(500).send(error.message);

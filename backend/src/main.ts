@@ -12,7 +12,7 @@ const app = express();
 const pool = new Pool({
   user: "admin",
   password: "admin123",
-  host: "db",
+  host: "localhost",
   port: 5432, // default Postgres port
   database: "bookstoreDb",
 });

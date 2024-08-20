@@ -33,7 +33,14 @@ const createAuthor = async (req: Request, res: Response) => {
 //Get all authors
 const getAllAuthors = async (req: Request, res: Response) => {
   try {
-    const authorList = await genericService(dbConnection, "authors", Author).getAll();
+    const page = parseInt(req.query.page as string) || 0;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+    const authorList = await genericService(
+      dbConnection,
+      "authors",
+      Author
+    ).getAll({ page, pageSize });
     res.json(authorList);
   } catch (error: any) {
     res.status(500).send(error.message);
