@@ -15,7 +15,13 @@ const columns: GridColDef[] = [
 function App() {
   return (
     <div style={{ height: 300, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} />
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        hideFooter={false}
+        hideFooterPagination={false}
+        hideFooterSelectedRowCount={false}
+      />
     </div>
   );
 }
