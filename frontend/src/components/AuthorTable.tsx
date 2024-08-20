@@ -7,7 +7,7 @@ const AuthorTable: React.FC = () => {
   const [authors, setAuthors] = useState<AuthorData[]>([]);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [rowCount, setRowCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
