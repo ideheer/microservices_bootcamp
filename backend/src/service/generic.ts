@@ -11,7 +11,6 @@ export function genericService<T>(
   ModelClass: ModelConstructor<T>
 ) {
   const create = async (payload: any): Promise<T> => {
- 
     const payloadKeys = Object.keys(payload); // ['publisheddate', 'summary', 'title', 'authorid']
     const payloadValues = Object.values(payload); // ['2024-08-12', 'Very good book', 'Name of the Wind', '4']
 
@@ -28,7 +27,7 @@ export function genericService<T>(
       const commaSeparatedFieldValues = payloadValuesArray.join(", "); // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
 
       let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues}) RETURNING *;`;
-      
+
       const result = await connection.query(query);
       // console.log(result);
       const created = new ModelClass(result.rows[0]) as Author | Book;
@@ -80,21 +79,20 @@ export function genericService<T>(
     }
   };
 
-  const getAll = async () : Promise<T> => {    
+  const getAll = async (): Promise<T> => {
     try {
       let query = `SELECT * FROM ${tableName} order by id;`;
 
       const result = await connection.query(query);
       const entityList = [];
-      for(const obj of result.rows){
+      for (const obj of result.rows) {
         const newEntity = new ModelClass(obj) as Author | Book;
         newEntity.validate();
         entityList.push(newEntity);
-      };
+      }
       return entityList as T;
-    } 
-    catch(error){
-      throw(error);
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -102,7 +100,7 @@ export function genericService<T>(
     create,
     get,
     getAll,
-    update
+    update,
   };
   return service;
 }
