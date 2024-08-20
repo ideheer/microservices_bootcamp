@@ -20,6 +20,6 @@ export const fetchAuthorData = async ({
 
   return {
     data: response.data,
-    total: 100, // we don't have a good structure to provide metadata
+    total: 99999, // we don't have a good structure to provide metadata
   };
 };
