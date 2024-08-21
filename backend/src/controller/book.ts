@@ -1,12 +1,14 @@
-import bookService from "../service/book";
-import Book from "../model/book"
 import pg from "pg";
-import { BookPayload } from "../types/payloads";
 import { Request, Response } from "express";
-import { genericService } from "../service/generic";
+import { Book, BookListing } from "../model/book";
+import { BookPayload } from "../types/payloads";
+import bookService from "../service/book";
+import genericService from "../service/generic";
+
 
 let dbConnection: pg.Pool;
 
+// Create book
 const createBook = async (req: Request, res: Response) => {
   const bookPayload: BookPayload = {
     title: req.body.title,
@@ -14,6 +16,7 @@ const createBook = async (req: Request, res: Response) => {
     authorid: req.body.authorid,
     summary: req.body.summary,
   };
+
   if (
     !bookPayload.title ||
     !bookPayload.publisheddate ||
@@ -21,41 +24,42 @@ const createBook = async (req: Request, res: Response) => {
     !bookPayload.summary
   ) {
     res.status(400).send("Bad request. Missing required field(s).");
+    return;
   }
+
   try {
-    const createdBook = await bookService(dbConnection).create(bookPayload);
+    const service = genericService<Book>(dbConnection, "books", Book);
+    const createdBook = await service.create(bookPayload);
     res.send(createdBook);
   } catch (error: any) {
     res.status(500).send(error.message);
   }
 };
 
-//Get all books
+// Get all books
 const getAllBooks = async (req: Request, res: Response) => {
   try {
-    const result = await genericService(dbConnection, "books", Book).getAll();
+    const service = genericService<BookListing>(dbConnection, "books", BookListing);
+    const result = await service.getAll();
     res.json(result);
   } catch (error: any) {
     res.status(500).send(error.message);
   }
 };
 
-//Get book by id
+// Get book by id
 const getBook = async (req: Request, res: Response) => {
   let bookId = req.params.id;
   try {
-    const result = await bookService(dbConnection).get(bookId);
-    if (result == null) {
-      res.status(404).send("Not found");
-    } else {
-      res.json(result);
-    }
+    const service = genericService<Book>(dbConnection, "books", Book);
+    const result = await service.get(bookId);
+    res.json(result);
   } catch (error: any) {
     res.status(500).send(error.message);
   }
 };
 
-//Update book by id
+// Update book by id
 const updateBook = async (req: Request, res: Response) => {
   const bookPayload: BookPayload = {
     title: req.body.title,
@@ -64,7 +68,7 @@ const updateBook = async (req: Request, res: Response) => {
     summary: req.body.summary,
     id: req.params.id,
   };
-  //console.log(bookPayload);
+
   if (
     !bookPayload.title ||
     !bookPayload.publisheddate ||
@@ -72,27 +76,31 @@ const updateBook = async (req: Request, res: Response) => {
     !bookPayload.summary
   ) {
     res.status(400).send("Bad request. Missing required field(s).");
+    return;
   }
+
   try {
-    const result = await bookService(dbConnection).update(bookPayload);
-    res.status(404).send("Not found");
+    const service = genericService<Book>(dbConnection, "books", Book);
+    const result = await service.update(bookPayload);
+    res.send(result);
   } catch (error: any) {
     res.status(500).send(error.message);
   }
 };
 
-//Delete book by id
+// Delete book by id
 const deleteBook = async (req: Request, res: Response) => {
   let bookId = req.params.id;
   try {
-    const result = await bookService(dbConnection).delete(bookId);
-    res.json({ Success: result });
+    const service = genericService<Book>(dbConnection, "books", Book);
+    await service.delete(bookId);
+    res.json({ success: true });
   } catch (error: any) {
     res.status(500).send(error.message);
   }
 };
 
-//Get books by Author
+// Get books by Author
 const getBookByAuthor = async (req: Request, res: Response) => {
   let authorId = req.params.authorid;
   try {
