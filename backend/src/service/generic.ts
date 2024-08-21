@@ -6,40 +6,32 @@ const prisma = new PrismaClient();
 const author = prisma.author;
 export type ModelConstructor<T> = new (payload: any) => T;
 
-export function genericService<T>(
+export default function genericService<T>(
+  connection: pg.Pool,
   tableName: string,
   ModelClass: ModelConstructor<T>
 ) {
   const create = async (payload: any): Promise<T> => {
-    const createdAuthor = (await prisma.author.create({
-      data: payload,
-    })) as Author;
 
-    const payloadKeys = Object.keys(payload); // ['publisheddate', 'summary', 'title', 'authorid']
-    const payloadValues = Object.values(payload); // ['2024-08-12', 'Very good book', 'Name of the Wind', '4']
+    const payloadKeys = Object.keys(payload);
+    const payloadValues = Object.values(payload);
+
+    const payloadValuesArray = payloadValues.map((value) => {
+      return "'" + value + "'";
+    });
+
+    const commaSeparatedFieldNames = payloadKeys.join(", ");
+    const commaSeparatedFieldValues = payloadValuesArray.join(", ");
 
     try {
-      // "INSERT INTO public.authors(name, bio) VALUES ($1, $2) RETURNING *;"
-      // "INSERT INTO public.books(title, publisheddate, authorid, summary) VALUES ($1, $2, $3, $4) RETURNING *",
-
-      const payloadValuesArray = payloadValues.map((value) => {
-        // 2024-08-12, Very good book, Name of the Wind, 4
-        return "'" + value + "'"; // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
-      });
-
-      const commaSeparatedFieldNames = payloadKeys.join(", "); // publisheddate, summary, title, authorid
-      const commaSeparatedFieldValues = payloadValuesArray.join(", "); // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
-
       let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues}) RETURNING *;`;
 
       const result = await connection.query(query);
-      // console.log(result);
       const created = new ModelClass(result.rows[0]) as Author | Book;
       created.validate();
 
       return created as T;
     } catch (error) {
-      // console.log(error);
       throw error;
     }
   };
@@ -61,6 +53,7 @@ export function genericService<T>(
       .filter(([key]) => key !== "id")
       .map(([key, value]) => `${key}='${value}'`)
       .join(", ");
+
     let query = `UPDATE public.${tableName} SET ${updateFields} WHERE id=${payload.id} RETURNING *;`;
 
     try {
@@ -88,6 +81,25 @@ export function genericService<T>(
     } catch (error) {
       throw error;
     }
+    catch (error) {
+      throw (error);
+    }
+  };
+
+  const deleteEntity = async (id: string): Promise<void> => {
+    try {
+      const queryCheck = `SELECT 1 FROM ${tableName} WHERE id=$1;`;
+      const resultCheck = await connection.query(queryCheck, [id]);
+  
+      if (resultCheck.rows.length === 0) {
+        throw new NotFoundError(`${ModelClass.name} with id ${id} not found.`);
+      }
+  
+      const queryDelete = `DELETE FROM ${tableName} WHERE id=$1;`;
+      await connection.query(queryDelete, [id]);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const service = {
@@ -95,6 +107,9 @@ export function genericService<T>(
     get,
     getAll,
     update,
+    update,
+    delete: deleteEntity,
   };
+
   return service;
 }

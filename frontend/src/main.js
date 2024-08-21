@@ -97,9 +97,9 @@ async function saveBook(event) {
   const title = document.getElementById("book-title").value;
   const summary = document.getElementById("book-summary").value;
   const authorId = document.getElementById("book-author").value;
-  const datePublished = document.getElementById("book-datePublished").value;
+  const publisheddate = document.getElementById("book-datePublished").value;
 
-  const book = { title, summary, authorId, datePublished };
+  const book = { title, summary, authorId, publisheddate };
 
   if (id) {
     await fetch(`${apiUrl}/books/${id}`, {
