@@ -1,17 +1,20 @@
-import { Author } from "../model/author";
+import { PrismaClient, Author, Book } from "@prisma/client";
 import NotFoundError from "../errors/errors";
-import Book from "../model/book";
-import pg from "pg";
 
+const prisma = new PrismaClient();
+
+const author = prisma.author;
 export type ModelConstructor<T> = new (payload: any) => T;
 
 export function genericService<T>(
-  connection: pg.Pool,
   tableName: string,
   ModelClass: ModelConstructor<T>
 ) {
   const create = async (payload: any): Promise<T> => {
- 
+    const createdAuthor = (await prisma.author.create({
+      data: payload,
+    })) as Author;
+
     const payloadKeys = Object.keys(payload); // ['publisheddate', 'summary', 'title', 'authorid']
     const payloadValues = Object.values(payload); // ['2024-08-12', 'Very good book', 'Name of the Wind', '4']
 
@@ -28,7 +31,7 @@ export function genericService<T>(
       const commaSeparatedFieldValues = payloadValuesArray.join(", "); // '2024-08-12', 'Very good book', 'Name of the Wind', '4'
 
       let query = `INSERT INTO public.${tableName}(${commaSeparatedFieldNames}) VALUES (${commaSeparatedFieldValues}) RETURNING *;`;
-      
+
       const result = await connection.query(query);
       // console.log(result);
       const created = new ModelClass(result.rows[0]) as Author | Book;
@@ -42,14 +45,8 @@ export function genericService<T>(
   };
 
   const get = async (id: string) => {
-    // console.log(tableName);
     let query = `SELECT * from ${tableName} WHERE id=${id} `;
-    // console.log(query);
-    const result = await connection.query(
-      // "SELECT * FROM authors WHERE id = $1;",
-      // [authorId]
-      query
-    );
+    const result = await connection.query(query);
 
     if (result.rows.length == 0) {
       throw new NotFoundError("Not found.");
@@ -67,11 +64,7 @@ export function genericService<T>(
     let query = `UPDATE public.${tableName} SET ${updateFields} WHERE id=${payload.id} RETURNING *;`;
 
     try {
-      const result = await connection.query(
-        query
-        // "UPDATE public.authors SET name=$1, bio=$2 WHERE id=$3 RETURNING *;",
-        // [name, bio, id]
-      );
+      const result = await connection.query(query);
       const updated = new ModelClass(result.rows[0]) as Author | Book;
       updated.validate();
       return updated;
@@ -80,21 +73,20 @@ export function genericService<T>(
     }
   };
 
-  const getAll = async () : Promise<T> => {    
+  const getAll = async (): Promise<T> => {
     try {
       let query = `SELECT * FROM ${tableName} order by id;`;
 
       const result = await connection.query(query);
       const entityList = [];
-      for(const obj of result.rows){
+      for (const obj of result.rows) {
         const newEntity = new ModelClass(obj) as Author | Book;
         newEntity.validate();
         entityList.push(newEntity);
-      };
+      }
       return entityList as T;
-    } 
-    catch(error){
-      throw(error);
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -102,7 +94,7 @@ export function genericService<T>(
     create,
     get,
     getAll,
-    update
+    update,
   };
   return service;
 }

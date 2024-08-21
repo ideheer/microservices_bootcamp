@@ -1,11 +1,9 @@
 import bookService from "../service/book";
-import Book from "../model/book"
+import Book from "../model/book";
 import pg from "pg";
 import { BookPayload } from "../types/payloads";
 import { Request, Response } from "express";
 import { genericService } from "../service/generic";
-
-let dbConnection: pg.Pool;
 
 const createBook = async (req: Request, res: Response) => {
   const bookPayload: BookPayload = {
@@ -103,8 +101,7 @@ const getBookByAuthor = async (req: Request, res: Response) => {
   }
 };
 
-export default function bookControllerFactory(connection: pg.Pool) {
-  dbConnection = connection;
+export default function bookControllerFactory() {
   const controller = {
     create: createBook,
     getAll: getAllBooks,

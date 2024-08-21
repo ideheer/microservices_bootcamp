@@ -1,28 +1,17 @@
 import authorControllerFactory from "./controller/author";
 import bookControllerFactory from "./controller/book";
 import express from "express";
-import pg from "pg";
 import cors from "cors";
-import morgan from "morgan"
-
-const { Pool } = pg;
+import morgan from "morgan";
 
 const app = express();
 
-const pool = new Pool({
-  user: "admin",
-  password: "admin123",
-  host: "db",
-  port: 5432, // default Postgres port
-  database: "bookstoreDb",
-});
-
-app.use(morgan("combined"))
+app.use(morgan("combined"));
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 
-const authorControllerObj = authorControllerFactory(pool);
-const bookControllerObj = bookControllerFactory(pool);
+const authorControllerObj = authorControllerFactory();
+const bookControllerObj = bookControllerFactory();
 
 //Create author
 app.post("/authors", authorControllerObj.create);

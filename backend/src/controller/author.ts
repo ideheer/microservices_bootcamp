@@ -1,14 +1,11 @@
 import NotFoundError from "../errors/errors";
 import authorService from "../service/author";
-import pg from "pg";
 
 import { Author } from "../model/author";
 import { AuthorPayload } from "../types/payloads";
 import { Request, Response } from "express";
 
 import { genericService, ModelConstructor } from "../service/generic";
-
-let dbConnection: pg.Pool;
 
 const createAuthor = async (req: Request, res: Response) => {
   const authorPayload: AuthorPayload = {
@@ -21,7 +18,7 @@ const createAuthor = async (req: Request, res: Response) => {
   }
   try {
     const service = genericService<Author>(dbConnection, "authors", Author);
-    console.log("SanityCheck: createAuthor Controller hit")
+    console.log("SanityCheck: createAuthor Controller hit");
     const createdAuthor = await service.create(authorPayload);
 
     res.send(createdAuthor);
@@ -33,7 +30,11 @@ const createAuthor = async (req: Request, res: Response) => {
 //Get all authors
 const getAllAuthors = async (req: Request, res: Response) => {
   try {
-    const authorList = await genericService(dbConnection, "authors", Author).getAll();
+    const authorList = await genericService(
+      dbConnection,
+      "authors",
+      Author
+    ).getAll();
     res.json(authorList);
   } catch (error: any) {
     res.status(500).send(error.message);
@@ -116,8 +117,7 @@ const deleteAuthor = async (req: Request, res: Response) => {
   }
 };
 
-export default function authorControllerFactory(connection: pg.Pool) {
-  dbConnection = connection;
+export default function authorControllerFactory() {
   const controller = {
     create: createAuthor,
     getAll: getAllAuthors,

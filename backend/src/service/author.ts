@@ -8,12 +8,18 @@ let dbConnection: pg.Pool;
 // Deprecated
 const createAuthor = async ({ name, bio }: AuthorPayload): Promise<Author> => {
   try {
+    const createdAuthor = (await prisma.author.create({
+      data: payload,
+    })) as Author;
+
+    /*
     const result = await dbConnection.query(
       "INSERT INTO public.authors(name, bio) VALUES ($1, $2) RETURNING *;",
       [name, bio]
     );
     const createdAuthor = new Author(result.rows[0]);
     createdAuthor.validate();
+    */
     return createdAuthor;
   } catch (error) {
     throw error;
