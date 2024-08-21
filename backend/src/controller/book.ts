@@ -1,11 +1,10 @@
-import pg from "pg";
 import { Request, Response } from "express";
-import { Book, BookListing } from "../model/book";
 import { BookPayload } from "../types/payloads";
 import bookService from "../service/book";
 import genericService from "../service/generic";
 
-let dbConnection: pg.Pool;
+import { PrismaClient, Book } from "@prisma/client";
+const prisma = new PrismaClient();
 
 // Create book
 const createBook = async (req: Request, res: Response) => {
@@ -27,7 +26,7 @@ const createBook = async (req: Request, res: Response) => {
   }
 
   try {
-    const service = genericService<Book>(dbConnection, "books", Book);
+    const service = genericService<Book>(prisma.book);
     const createdBook = await service.create(bookPayload);
     res.send(createdBook);
   } catch (error: any) {
@@ -38,11 +37,7 @@ const createBook = async (req: Request, res: Response) => {
 // Get all books
 const getAllBooks = async (req: Request, res: Response) => {
   try {
-    const service = genericService<BookListing>(
-      dbConnection,
-      "books",
-      BookListing
-    );
+    const service = genericService<Book>(prisma.book);
     const result = await service.getAll();
     res.json(result);
   } catch (error: any) {
@@ -54,7 +49,7 @@ const getAllBooks = async (req: Request, res: Response) => {
 const getBook = async (req: Request, res: Response) => {
   let bookId = req.params.id;
   try {
-    const service = genericService<Book>(dbConnection, "books", Book);
+    const service = genericService<Book>(prisma.book);
     const result = await service.get(bookId);
     res.json(result);
   } catch (error: any) {
@@ -83,7 +78,7 @@ const updateBook = async (req: Request, res: Response) => {
   }
 
   try {
-    const service = genericService<Book>(dbConnection, "books", Book);
+    const service = genericService<Book>(prisma.book);
     const result = await service.update(bookPayload);
     res.send(result);
   } catch (error: any) {
@@ -95,7 +90,7 @@ const updateBook = async (req: Request, res: Response) => {
 const deleteBook = async (req: Request, res: Response) => {
   let bookId = req.params.id;
   try {
-    const service = genericService<Book>(dbConnection, "books", Book);
+    const service = genericService<Book>(prisma.book);
     await service.delete(bookId);
     res.json({ success: true });
   } catch (error: any) {
@@ -107,7 +102,7 @@ const deleteBook = async (req: Request, res: Response) => {
 const getBookByAuthor = async (req: Request, res: Response) => {
   let authorId = req.params.authorid;
   try {
-    const result = await bookService(dbConnection).getByAuthor(authorId);
+    const result = await bookService().getByAuthor(authorId);
     res.json(result);
   } catch (error: any) {
     res.status(500).send(error.message);

@@ -1,28 +1,24 @@
-import pg from "pg";
-import { Book } from "../model/book"
+import { PrismaClient, Book } from "@prisma/client";
 
-let dbConnection:pg.Pool;
+const prisma = new PrismaClient();
 
-const getBookByAuthor = async (authorid:string) => {
-    try{
-        const result = await dbConnection.query('SELECT * FROM public.books WHERE authorid = $1', [authorid]);
-        const books = [];
-        for(const obj of result.rows){
-            const newBook = new Book(obj);
-            newBook.validate();
-            books.push(newBook);
-        };
-        return books;
-    }
-    catch(error){
-        throw(error);
-    }
-}
+const getBookByAuthor = async (authorId: string) => {
+  try {
+    const books = await prisma.book.findMany({
+      where: {
+        authorId: parseInt(authorId), // Assuming authorId is an integer
+      },
+    });
 
-export default function bookService(connection:pg.Pool){
-    dbConnection = connection;
-    const service = {
-        getByAuthor: getBookByAuthor,
-    };
-    return service;
+    return books;
+  } catch (error) {
+    throw error;
+  }
 };
+
+export default function bookService() {
+  const service = {
+    getByAuthor: getBookByAuthor,
+  };
+  return service;
+}

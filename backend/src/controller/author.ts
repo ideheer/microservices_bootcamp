@@ -1,11 +1,10 @@
-import pg from "pg";
 import { Request, Response } from "express";
-import { Author, AuthorListing } from "../model/author";
 import { AuthorPayload } from "../types/payloads";
 import genericService from "../service/generic";
 import NotFoundError from "../errors/errors";
 
-let dbConnection: pg.Pool;
+import { PrismaClient, Author } from "@prisma/client";
+const prisma = new PrismaClient();
 
 // Create author
 const createAuthor = async (req: Request, res: Response) => {
@@ -18,7 +17,7 @@ const createAuthor = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const service = genericService<Author>(dbConnection, "authors", Author);
+    const service = genericService<Author>(prisma.author);
     console.log("SanityCheck: createAuthor Controller hit");
     const createdAuthor = await service.create(authorPayload);
 
@@ -31,16 +30,7 @@ const createAuthor = async (req: Request, res: Response) => {
 // Get all authors
 const getAllAuthors = async (req: Request, res: Response) => {
   try {
-    const authorList = await genericService(
-      dbConnection,
-      "authors",
-      Author
-    ).getAll();
-    const authorList = await genericService<AuthorListing>(
-      dbConnection,
-      "authors",
-      AuthorListing
-    ).getAll();
+    const authorList = await genericService<Author>(prisma.author).getAll();
     res.json(authorList);
   } catch (error: any) {
     res.status(500).send(error.message);
@@ -51,11 +41,7 @@ const getAllAuthors = async (req: Request, res: Response) => {
 const getAuthor = async (req: Request, res: Response) => {
   let authorId = req.params.id;
   try {
-    const result = await genericService<Author>(
-      dbConnection,
-      "authors",
-      Author
-    ).get(authorId);
+    const result = await genericService<Author>(prisma.author).get(authorId);
     res.json(result);
   } catch (error: any) {
     if (error instanceof NotFoundError) {
@@ -79,11 +65,9 @@ const updateAuthor = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedAuthor = await genericService<Author>(
-      dbConnection,
-      "authors",
-      Author
-    ).update(authorPayload);
+    const updatedAuthor = await genericService<Author>(prisma.author).update(
+      authorPayload
+    );
     res.send(updatedAuthor);
   } catch (error: any) {
     res.status(500).send(error.message);
@@ -94,7 +78,7 @@ const updateAuthor = async (req: Request, res: Response) => {
 const deleteAuthor = async (req: Request, res: Response) => {
   let authorId = req.params.id;
   try {
-    const service = genericService<Author>(dbConnection, "authors", Author);
+    const service = genericService<Author>(prisma.author);
     await service.delete(authorId);
     res.json({ success: true });
   } catch (error: any) {
